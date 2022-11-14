@@ -23,7 +23,7 @@ body {
 
 canvas{
     width: 1000px;
-    height: 80vh;
+    height: 800px;
     position: absolute;
     top: 10%;
     left: 50%;
