@@ -44,7 +44,7 @@ class Game{
       
         //block | lösa att bollarna inte hinner spawna
         if(this.brickCount > this.bricks.length){
-            this.bricks.push(new Brick(this.balls))
+            this.bricks.push(new Brick(this.balls, this))
         } else if(!this.brickCount > this.bricks.length){
             this.brickCount++
         }
@@ -132,12 +132,13 @@ class Ball{
 }
 
 class Brick{
-    constructor(ball){
+    constructor(ball, game){
         this.ball = ball
-        this.x = Math.random()*980 //ändra från hårdkodat
-        this.y = 100
+        this.game = game
         this.width = 40
         this.height = 40
+        this.x = Math.random()*this.game.width - this.width / 2 
+        this.y = 100
 
         this.markedForDelete = false
     }
@@ -148,6 +149,7 @@ class Brick{
             this.y + this.height > this.ball.map(e => e.y)[0]){
 
             this.markedForDelete = true
+            this.game.brickCount--
         }
         else{
             this.markedForDelete = false
