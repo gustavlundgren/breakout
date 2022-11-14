@@ -20,7 +20,7 @@ class Game{
         this.player = new Player(this, range.value)
 
         this.bricks = []
-        this.brickCount = 1 //antal bricks(ska bero på level)
+        this.brickCount = 4 //antal bricks(ska bero på level)
 
         this.ballInterval = 300
         this.ballTimer = 300
@@ -134,7 +134,7 @@ class Ball{
 class Brick{
     constructor(ball){
         this.ball = ball
-        this.x = 100
+        this.x = Math.random()*980 //ändra från hårdkodat
         this.y = 100
         this.width = 40
         this.height = 40
