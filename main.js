@@ -19,13 +19,13 @@ class Game{
 
         this.player = new Player(this, range.value)
 
-        this.balls = []
-        this.ballInterval = 300
-        this.ballTimer = 0
-        this.ballCount = 3
-
         this.bricks = []
-        this.brickCount = 4
+        this.brickCount = 1 //antal bricks(ska bero på level)
+
+        this.ballInterval = 300
+        this.ballTimer = 300
+        this.ballCount = 1 // antal bollar (ska bero på powerup)
+        this.balls = [] 
     }
     update(){
         // bollar
@@ -33,29 +33,32 @@ class Game{
 
         if(this.ballTimer > this.ballInterval && this.balls.length < this.ballCount){
             this.balls.push(new Ball(this.player, this))
+            
             this.ballTimer = 0
         }else{
             this.ballTimer++
         }
-
+          
+        
         this.balls.forEach(object => object.update())
-
-        //block
+      
+        //block | lösa att bollarna inte hinner spawna
         if(this.brickCount > this.bricks.length){
             this.bricks.push(new Brick(this.balls))
-
         } else if(!this.brickCount > this.bricks.length){
             this.brickCount++
         }
-
+        
         this.bricks.forEach(object => object.update())
 
-        console.log(this.bricks);
+        this.bricks = this.bricks.filter(object => !object.markedForDelete)
     }
     draw(){
         //ritar ut allt
         this.player.draw(this.ctx)
+
         this.balls.forEach(object => object.draw(this.ctx))
+
         this.bricks.forEach(object => object.draw(this.ctx))
     }
 }
@@ -116,7 +119,6 @@ class Ball{
         //kolla efter kollisoin med spelaren
         if(this.y + this.size / 2 > this.player.y && this.y && this.y < this.player.y + this.player.height && this.x > this.player.x && this.x < this.player.x + this.player.width){
             this.yVel = -this.yVel 
-            this.xVel = -this.xVel
         }
 
         this.x += this.xVel
@@ -131,16 +133,71 @@ class Ball{
 
 class Brick{
     constructor(ball){
-        this.balls = [...ball]
-        this.x = 10
+        this.ball = ball
+        this.x = 100
+        this.y = 100
+        this.width = 40
+        this.height = 40
+
+        this.markedForDelete = false
     }
     update(){
-        //console.log(this.balls);
+        if( this.x + this.width > this.ball.map(e => e.x)[0] &&
+            this.x < this.ball.map(e => e.x)[0] &&
+            this.y < this.ball.map(e => e.y)[0] &&
+            this.y + this.height > this.ball.map(e => e.y)[0]){
+
+            this.markedForDelete = true
+        }
+        else{
+            this.markedForDelete = false
+        }
     }
     draw(ctx){
-        ctx.fillRect(100, 100, 10 ,10)
+        ctx.fillRect(this.x, this.y, this.width ,this.height)
     }
 }
+
+class LevelOneBrick extends Brick{
+    constructor(ball){
+        super(ball)
+        this.damage = 1
+    }
+    update(){
+        super.update()
+    }
+    draw(ctx){
+        super.draw(ctx)
+    }
+}
+
+//olika typer av block
+class LevelTwoBrick extends Brick{
+    constructor(ball){
+        super(ball)
+        this.damage = 2
+    }
+    update(){
+        super.update()
+    }
+    draw(ctx){
+        super.draw(ctx)
+    }
+}
+
+class LevelThreeBrick extends Brick{
+    constructor(ball){
+        super(ball)
+        this.damage = 3
+    }
+    update(){
+        super.update()
+    }
+    draw(ctx){
+        super.draw(ctx)
+    }
+}
+
 
 //Skapar ett object från min klass "Game"
 const game = new Game(ctx, canvas.width, canvas.height)
