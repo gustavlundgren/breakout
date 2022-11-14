@@ -15,30 +15,48 @@ class Game{
         this.height = height
         this.range = range
 
+        this.level = {/*lägga in lista med egenskaper för varje level (5 levlar)*/}
+
         this.player = new Player(this, range.value)
+
         this.balls = []
         this.ballInterval = 300
         this.ballTimer = 0
+        this.ballCount = 3
+
+        this.bricks = []
+        this.brickCount = 4
     }
     update(){
+        // bollar
         this.player.update()
 
-        if(this.ballTimer > this.ballInterval){
+        if(this.ballTimer > this.ballInterval && this.balls.length < this.ballCount){
             this.balls.push(new Ball(this.player, this))
             this.ballTimer = 0
         }else{
             this.ballTimer++
         }
 
-        if(this.balls.length == 2){
-            this.balls.pop()
+        this.balls.forEach(object => object.update())
+
+        //block
+        if(this.brickCount > this.bricks.length){
+            this.bricks.push(new Brick(this.balls))
+
+        } else if(!this.brickCount > this.bricks.length){
+            this.brickCount++
         }
 
-        this.balls.forEach(object => object.update())
+        this.bricks.forEach(object => object.update())
+
+        console.log(this.bricks);
     }
     draw(){
+        //ritar ut allt
         this.player.draw(this.ctx)
         this.balls.forEach(object => object.draw(this.ctx))
+        this.bricks.forEach(object => object.draw(this.ctx))
     }
 }
 
@@ -61,7 +79,7 @@ class Player{
 }
 
 
-//skapa en vektorer
+//skapa en vektorer | byt till rect och ändra kollision 
 class Ball{
     constructor(player, game){
         this.game = game
@@ -71,8 +89,8 @@ class Ball{
         this.x = this.player.x + this.player.width/ 2
         this.y = this.player.y - this.size/ 2
     
-        this.xVel = 1
-        this.yVel = -1
+        this.xVel = 2
+        this.yVel = -2
     }
     update(){
 
@@ -96,8 +114,9 @@ class Ball{
         }
 
         //kolla efter kollisoin med spelaren
-        if(this.y + this.size / 2 > this.player.y && this.x > this.player.x && this.x < this.player.x + this.player.width){
-            this.yVel = -this.yVel
+        if(this.y + this.size / 2 > this.player.y && this.y && this.y < this.player.y + this.player.height && this.x > this.player.x && this.x < this.player.x + this.player.width){
+            this.yVel = -this.yVel 
+            this.xVel = -this.xVel
         }
 
         this.x += this.xVel
@@ -107,6 +126,19 @@ class Ball{
         ctx.beginPath()
         ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI)
         ctx.fill()
+    }
+}
+
+class Brick{
+    constructor(ball){
+        this.balls = [...ball]
+        this.x = 10
+    }
+    update(){
+        //console.log(this.balls);
+    }
+    draw(ctx){
+        ctx.fillRect(100, 100, 10 ,10)
     }
 }
 
