@@ -2,7 +2,7 @@
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext('2d')
 canvas.width = 1000
-canvas.height = 800
+canvas.height = 800 
 
 //försöka få inte global kanske
 const range = document.getElementById('range')
@@ -20,7 +20,8 @@ class Game{
         this.player = new Player(this, range.value)
 
         this.bricks = []
-        this.brickCount = 1 //antal bricks(ska bero på level)
+        this.brickCount = 4 //antal bricks(ska bero på level)
+        this.posCalc = 0
 
         this.ballInterval = 300
         this.ballTimer = 300
@@ -33,7 +34,6 @@ class Game{
 
         if(this.ballTimer > this.ballInterval && this.balls.length < this.ballCount){
             this.balls.push(new Ball(this.player, this))
-            
             this.ballTimer = 0
         }else{
             this.ballTimer++
@@ -43,10 +43,13 @@ class Game{
         this.balls.forEach(object => object.update())
       
         //block | lösa att bollarna inte hinner spawna
+
         if(this.brickCount > this.bricks.length){
-            this.bricks.push(new Brick(this.balls))
+            this.posCalc++
+            this.bricks.push(new Brick(this.balls, this,this.posCalc))
         } else if(!this.brickCount > this.bricks.length){
             this.brickCount++
+            this.posCount = 0
         }
         
         this.bricks.forEach(object => object.update())
@@ -91,9 +94,9 @@ class Ball{
         this.size = 5
         this.x = this.player.x + this.player.width/ 2
         this.y = this.player.y - this.size/ 2
-    
-        this.xVel = 2
-        this.yVel = -2
+        
+        this.xVel = 3
+        this.yVel = -3
     }
     update(){
 
@@ -118,6 +121,7 @@ class Ball{
 
         //kolla efter kollisoin med spelaren
         if(this.y + this.size / 2 > this.player.y && this.y && this.y < this.player.y + this.player.height && this.x > this.player.x && this.x < this.player.x + this.player.width){
+            //studs ändra så att vinkeln blir anorlunda beroende på vart på rectangeln man träffar
             this.yVel = -this.yVel 
         }
 
@@ -132,22 +136,82 @@ class Ball{
 }
 
 class Brick{
-    constructor(ball){
+    constructor(ball, game, pos){
+        this.game = game
         this.ball = ball
-        this.x = 100
+        this.pos = pos  //tar en input från class Game 
+
+        this.position;  // gör om inputen till en output i listan
+        this.positions = {position1: [20, 20],
+                          position2: [140, 20],
+                          position3: [260, 20],
+                          position4: [380, 20]}
+
+        this.width = 100
+        this.height = 100
+        this.x = Math.random() * this.game.width - this.width/ 2
         this.y = 100
-        this.width = 40
-        this.height = 40
+       
 
         this.markedForDelete = false
     }
     update(){
+        switch(this.pos){
+            case 1:
+                this.position = {
+                    x: this.positions.position1[0], 
+                    y: this.positions.position1[1]
+                }
+
+                this.x = this.position.x
+                this.y = this.position.y
+
+                console.log('1', this.x);
+                break 
+            case 2:
+                this.position = {
+                    x: this.positions.position2[0], 
+                    y: this.positions.position2[1]
+                }
+
+                this.x = this.position.x
+                this.y = this.position.y
+
+                console.log('2', this.x);
+                break
+            case 3:
+                this.position = {
+                    x: this.positions.position3[0], 
+                    y: this.positions.position3[1]
+                }
+    
+                this.x = this.position.x
+                this.y = this.position.y
+                
+                console.log('3', this.x);
+                break
+            case 4:
+                this.position = {
+                    x: this.positions.position4[0], 
+                    y: this.positions.position4[1]
+                }
+    
+                this.x = this.position.x
+                this.y = this.position.y
+
+                console.log('4', this.x);
+                break
+            default: 
+                console.log('switch error');
+        }
+
         if( this.x + this.width > this.ball.map(e => e.x)[0] &&
             this.x < this.ball.map(e => e.x)[0] &&
             this.y < this.ball.map(e => e.y)[0] &&
             this.y + this.height > this.ball.map(e => e.y)[0]){
 
             this.markedForDelete = true
+            this.game.brickCount--
         }
         else{
             this.markedForDelete = false
