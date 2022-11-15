@@ -20,8 +20,8 @@ class Game{
         this.player = new Player(this, range.value)
 
         this.bricks = []
-        this.brickCount = 16 //antal bricks(ska bero på level) | en rad är 8 st
-        this.posCalc = 20
+        this.brickCount = 8 * 2 //antal bricks(ska bero på level) | en rad är 8 st
+        this.posCalc = 10
 
         this.ballInterval = 300
         this.ballTimer = 300
@@ -44,15 +44,19 @@ class Game{
       
         //block | lösa att bollarna inte hinner spawna
 
-        if(this.brickCount > this.bricks.length && this.posCalc < 860){
+        if(this.brickCount > this.bricks.length){
+            
             this.posCalc += 120
-            this.bricks.push(new Brick(this.balls, this,this.posCalc)) 
+
+            if(this.bricks.length % 8 == 0){
+                this.posCalc = 10
+            }
+            
+            this.bricks.push(new Brick(this.balls, this)) 
             
         } else if(!this.brickCount > this.bricks.length){
             this.brickCount++
-        } else{
-            this.posCalc = 20
-        }
+        } 
         
         console.log(this.posCalc);
 
@@ -140,26 +144,29 @@ class Ball{
 }
 
 class Brick{
-    constructor(ball, game, pos){
+    constructor(ball, game){
         this.game = game
         this.ball = ball
-        this.pos = pos  //tar en input från class Game 
+        this.pos = this.game.posCalc  //tar en input från class Game 
 
         this.row = 0  // gör om inputen till en output i listan
         this.rows = [
                         20,
+                        50,
+                        80,
+                        110,
                         140,
+                        170,
+                        200,
+                        230,
                         260,
-                        380,
-                        500,
-                        620,
-                        740,
-                        860
+                        290,
+                        310
                     ]
 
         this.width = 100
-        this.height = 100
-        this.x = this.pos
+        this.height = 20
+        this.x = 0
         this.y = 20
        
 
@@ -167,13 +174,13 @@ class Brick{
     }
     update(){
 
-        console.log('pos = ',this.pos);
-        if(this.pos == 860){
-            this.row++
+        this.x = this.pos
+
+        if(this.game.bricks.length % 8 == 0 && this.y < this.rows[10]){
+            this.y += 20
         }
 
         console.log('row = ', this.row);
-        this.y = this.rows[this.row]
 
         if( this.x + this.width > this.ball.map(e => e.x)[0] &&
             this.x < this.ball.map(e => e.x)[0] &&
@@ -188,6 +195,8 @@ class Brick{
         }
     }
     draw(ctx){
+        console.log('x', this.x);
+        console.log('y', this.y);
         ctx.fillRect(this.x, this.y, this.width ,this.height)
     }
 }
