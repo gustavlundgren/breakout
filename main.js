@@ -2,12 +2,15 @@
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext('2d')
 canvas.width = 1000
-canvas.height = 800
+canvas.height = 800 
 
 //försöka få inte global kanske
 const range = document.getElementById('range')
 
 //en klass som sköter updatering och ritning av spelets object och även har koll på storlek och positioner
+
+let turn = false
+
 class Game{
     constructor(ctx, width, height){
         this.ctx = ctx
@@ -22,21 +25,34 @@ class Game{
         this.bricks = []
         this.brickCount = 4 //antal bricks(ska bero på level)
 
+        //this.brickCount = 8 //antal bricks(ska bero på level) | en rad är 8 st
+
+        this.bricksOnScreen = 90
+        this.rowAmount = 1
+        this.rowCheck = 0
+
         this.ballInterval = 300
         this.ballTimer = 300
         this.ballCount = 1 // antal bollar (ska bero på powerup)
         this.balls = [] 
+
+
+        this.iX = 0
+        this.iY = 0
     }
+            
+    
     update(){
         // bollar
         this.player.update()
 
         if(this.ballTimer > this.ballInterval && this.balls.length < this.ballCount){
+
             this.balls.push(new Ball(this.player, this))
-            
             this.ballTimer = 0
+
         }else{
-            this.ballTimer++
+            this.ballTimer++ 
         }
           
         
@@ -88,29 +104,33 @@ class Ball{
         this.game = game
         this.player = player
 
-        this.size = 5
+        this.size = 10
         this.x = this.player.x + this.player.width/ 2
         this.y = this.player.y - this.size/ 2
-    
-        this.xVel = 2
-        this.yVel = -2
+        
+        this.xVel = 3
+        this.yVel = -3
     }
     update(){
 
-        if(this.x < this.size / 2){
+        if(turn){
             this.xVel = -this.xVel
         }
 
-        if(this.x > (this.game.width) - (this.size / 2)){
+        if(this.x < 0){
             this.xVel = -this.xVel
         }
 
-        if(this.y < this.size/ 2){
+        if(this.x > this.game.width - this.size){
+            this.xVel = -this.xVel
+        }
+
+        if(this.y < 0){
             this.yVel = -this.yVel
         }
 
         //Förlora liv 
-        if(this.y > this.game.height + this.size/ 2){
+        if(this.y > this.game.height + this.size){
             this.y = this.player.y - this.size/ 2
             this.x = this.player.x + this.player.width/ 2
             this.yVel = -this.yVel
@@ -118,6 +138,7 @@ class Ball{
 
         //kolla efter kollisoin med spelaren
         if(this.y + this.size / 2 > this.player.y && this.y && this.y < this.player.y + this.player.height && this.x > this.player.x && this.x < this.player.x + this.player.width){
+            //studs ändra så att vinkeln blir anorlunda beroende på vart på rectangeln man träffar
             this.yVel = -this.yVel 
         }
 
@@ -125,9 +146,7 @@ class Ball{
         this.y += this.yVel
     }
     draw(ctx){
-        ctx.beginPath()
-        ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI)
-        ctx.fill()
+        ctx.fillRect(this.x, this.y, this.size, this.size)
     }
 }
 
@@ -143,15 +162,18 @@ class Brick{
         this.markedForDelete = false
     }
     update(){
-        if( this.x + this.width > this.ball.map(e => e.x)[0] &&
+
+        if( this.x + this.width > this.ball.map(e => e.x)[0] - this.ball.map(e => e.size)[0] / 2 &&
             this.x < this.ball.map(e => e.x)[0] &&
             this.y < this.ball.map(e => e.y)[0] &&
-            this.y + this.height > this.ball.map(e => e.y)[0]){
-
+            this.y + this.height > this.ball.map(e => e.y)[0] - this.ball.map(e => e.size)[0] / 2){
+            
+            turn = true
             this.markedForDelete = true
             this.game.brickCount--
         }
         else{
+            turn = false
             this.markedForDelete = false
         }
     }
@@ -161,8 +183,8 @@ class Brick{
 }
 
 class LevelOneBrick extends Brick{
-    constructor(ball){
-        super(ball)
+    constructor(ball, game){
+        super(ball, game)
         this.damage = 1
     }
     update(){
@@ -175,8 +197,8 @@ class LevelOneBrick extends Brick{
 
 //olika typer av block
 class LevelTwoBrick extends Brick{
-    constructor(ball){
-        super(ball)
+    constructor(ball, game){
+        super(ball, game)
         this.damage = 2
     }
     update(){
@@ -188,8 +210,8 @@ class LevelTwoBrick extends Brick{
 }
 
 class LevelThreeBrick extends Brick{
-    constructor(ball){
-        super(ball)
+    constructor(ball, game){
+        super(ball, game)
         this.damage = 3
     }
     update(){
