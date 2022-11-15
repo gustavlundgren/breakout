@@ -22,7 +22,7 @@ class Game{
         this.bricks = []
         this.brickCount = 8 //antal bricks(ska bero på level) | en rad är 8 st
 
-        this.brickX = 0
+        this.brickX = 20
 
         this.posCalc = 20
         this.rowAmount = 1
@@ -52,22 +52,12 @@ class Game{
       
         //block | lösa att bollarna inte hinner spawna
         if(this.rowCheck < this.rowAmount){
-
-            if(this.bricks.length % this.brickCount == 0){
-
-                for(let i = 0; i < this.brickCount; i++){
-                    this.bricks.push(new Brick(this.balls, this, this.rowAmount, this.brickX))
-                    if(this.rowAmount < 10) this.rowAmount++
-                }
-                
-            } else if(!this.bricks.length % this.brickCount == 0){
-                this.brickCount++
-                this.brickX += 110
-            } 
-
-        }else{
             
-            this.brickCount = 8
+            this.bricks.push(new Brick(this.balls, this, this.rowAmount, this.brickX))
+
+            if(this.rowAmount < 10){
+                this.rowAmount++
+            }
         }
 
         this.bricks.forEach(object => object.update())
@@ -186,7 +176,7 @@ class Brick{
         
         this.y = this.rows[this.row]
 
-        console.log('row = ', this.row);
+        //console.log('row = ', this.row);
 
         if( this.x + this.width > this.ball.map(e => e.x)[0] &&
             this.x < this.ball.map(e => e.x)[0] &&
