@@ -20,9 +20,8 @@ class Game{
         this.player = new Player(this, range.value)
 
         this.bricks = []
-        this.brickCount = 8 //antal bricks(ska bero på level) | en rad är 8 st
 
-        this.brickX = 20
+        //this.brickCount = 8 //antal bricks(ska bero på level) | en rad är 8 st
 
         this.posCalc = 20
         this.rowAmount = 1
@@ -32,6 +31,15 @@ class Game{
         this.ballTimer = 300
         this.ballCount = 1 // antal bollar (ska bero på powerup)
         this.balls = [] 
+    }
+    brickCollumn(x){
+        if(this.rowCheck < this.rowAmount){
+            this.bricks.push(new Brick(this.balls, this, this.rowAmount, x, y))
+
+            if(this.rowAmount < 10){
+                this.rowAmount++
+            }
+        }
     }
     update(){
         // bollar
@@ -43,22 +51,81 @@ class Game{
             this.ballTimer = 0
 
         }else{
-            this.ballTimer++
-            
+            this.ballTimer++ 
         }
           
         
         this.balls.forEach(object => object.update())
       
         //block | lösa att bollarna inte hinner spawna
-        if(this.rowCheck < this.rowAmount){
-            
-            this.bricks.push(new Brick(this.balls, this, this.rowAmount, this.brickX))
 
-            if(this.rowAmount < 10){
-                this.rowAmount++
-            }
-        }
+            this.brickCollumn(0)
+            this.brickCollumn(0)
+            this.brickCollumn(0)
+            this.brickCollumn(0)
+            this.brickCollumn(0)
+            this.brickCollumn(0)
+            this.brickCollumn(0)
+            this.brickCollumn(0)
+            this.brickCollumn(0)
+            this.brickCollumn(0)
+            
+            this.rowAmount = 1
+            this.rowCheck = 0
+
+            this.brickCollumn(1)
+            this.brickCollumn(1)
+            this.brickCollumn(1)
+            this.brickCollumn(1)
+            this.brickCollumn(1)
+            this.brickCollumn(1)
+            this.brickCollumn(1)
+            this.brickCollumn(1)
+            this.brickCollumn(1)
+            this.brickCollumn(1)
+
+            this.rowAmount = 1
+            this.rowCheck = 0
+
+            this.brickCollumn(2)
+            this.brickCollumn(2)
+            this.brickCollumn(2)
+            this.brickCollumn(2)
+            this.brickCollumn(2)
+            this.brickCollumn(2)
+            this.brickCollumn(2)
+            this.brickCollumn(2)
+            this.brickCollumn(2)
+            this.brickCollumn(2)
+
+            this.rowAmount = 1
+            this.rowCheck = 0
+
+            this.brickCollumn(3)
+            this.brickCollumn(3)
+            this.brickCollumn(3)
+            this.brickCollumn(3)
+            this.brickCollumn(3)
+            this.brickCollumn(3)
+            this.brickCollumn(3)
+            this.brickCollumn(3)
+            this.brickCollumn(3)
+            this.brickCollumn(3)
+
+            this.rowAmount = 1
+            this.rowCheck = 0
+
+            this.brickCollumn(4)
+            this.brickCollumn(4)
+            this.brickCollumn(4)
+            this.brickCollumn(4)
+            this.brickCollumn(4)
+            this.brickCollumn(4)
+            this.brickCollumn(4)
+            this.brickCollumn(4)
+            this.brickCollumn(4)
+            this.brickCollumn(4)
+
 
         this.bricks.forEach(object => object.update())
 
@@ -144,37 +211,43 @@ class Ball{
 }
 
 class Brick{
-    constructor(ball, game, row, x){
+    constructor(ball, game, x, y){
         this.game = game
         this.ball = ball
         this.pos = this.game.posCalc  //tar en input från class Game 
 
-        this.row = row  // gör om inputen till en output i listan
-        this.rows = [   0,
-                        20,
-                        50,
-                        80,
-                        110,
-                        140,
-                        170,
-                        200,
-                        230,
-                        260,
-                        290,
-                        310
-                    ]
+        this.rows = [   
+            0,
+            20,
+            50,
+            80,
+            110,
+            140,
+            170,
+            200,
+            230,
+            260,
+            290,
+            310
+        ]
+        
+        this.collumns = [  
+            20,
+            140,
+            260,
+            380
+        ]
 
         this.width = 100
         this.height = 20
-        this.x = x
-        this.y = 20
-       
+        this.x = this.collumns[x]
+        this.y = this.rows[y]
 
         this.markedForDelete = false
     }
     update(){
         
-        this.y = this.rows[this.row]
+       
 
         //console.log('row = ', this.row);
 
@@ -184,22 +257,19 @@ class Brick{
             this.y + this.height > this.ball.map(e => e.y)[0]){
 
             this.markedForDelete = true
-            this.game.brickCount--
         }
         else{
             this.markedForDelete = false
         }
     }
     draw(ctx){
-        console.log('x', this.x);
-        console.log('y', this.y);
         ctx.fillRect(this.x, this.y, this.width ,this.height)
     }
 }
 
 class LevelOneBrick extends Brick{
-    constructor(ball){
-        super(ball)
+    constructor(ball, game){
+        super(ball, game)
         this.damage = 1
     }
     update(){
@@ -212,8 +282,8 @@ class LevelOneBrick extends Brick{
 
 //olika typer av block
 class LevelTwoBrick extends Brick{
-    constructor(ball, game, pos){
-        super(ball, game, pos)
+    constructor(ball, game){
+        super(ball, game)
         this.damage = 2
     }
     update(){
@@ -225,8 +295,8 @@ class LevelTwoBrick extends Brick{
 }
 
 class LevelThreeBrick extends Brick{
-    constructor(ball, game, pos){
-        super(ball, game, pos)
+    constructor(ball, game){
+        super(ball, game)
         this.damage = 3
     }
     update(){
