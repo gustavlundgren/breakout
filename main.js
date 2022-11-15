@@ -8,6 +8,9 @@ canvas.height = 800
 const range = document.getElementById('range')
 
 //en klass som sköter updatering och ritning av spelets object och även har koll på storlek och positioner
+
+let turn = false
+
 class Game{
     constructor(ctx, width, height){
         this.ctx = ctx
@@ -23,7 +26,7 @@ class Game{
 
         //this.brickCount = 8 //antal bricks(ska bero på level) | en rad är 8 st
 
-        this.posCalc = 20
+        this.bricksOnScreen = 90
         this.rowAmount = 1
         this.rowCheck = 0
 
@@ -31,6 +34,10 @@ class Game{
         this.ballTimer = 300
         this.ballCount = 1 // antal bollar (ska bero på powerup)
         this.balls = [] 
+
+
+        this.iX = 0
+        this.iY = 0
     }
             
     
@@ -51,8 +58,14 @@ class Game{
         this.balls.forEach(object => object.update())
       
         //block | lösa att bollarna inte hinner spawna
-        if(this.bricks.length < 1){
-            this.bricks.push(new Brick(this.balls, this, 0, 0))
+        if(this.bricks.length < this.bricksOnScreen){
+            if(this.iX < 9){
+            this.bricks.push(new Brick(this.balls, this, this.iX, this.iY)) 
+            this.iX++
+            }else{
+                this.iY++
+                this.iX = 0
+            }
         }    
                         
         this.bricks.forEach(object => object.update())
@@ -94,7 +107,7 @@ class Ball{
         this.game = game
         this.player = player
 
-        this.size = 5
+        this.size = 10
         this.x = this.player.x + this.player.width/ 2
         this.y = this.player.y - this.size/ 2
         
@@ -103,20 +116,24 @@ class Ball{
     }
     update(){
 
-        if(this.x < this.size / 2){
+        if(turn){
             this.xVel = -this.xVel
         }
 
-        if(this.x > (this.game.width) - (this.size / 2)){
+        if(this.x < 0){
             this.xVel = -this.xVel
         }
 
-        if(this.y < this.size/ 2){
+        if(this.x > this.game.width - this.size){
+            this.xVel = -this.xVel
+        }
+
+        if(this.y < 0){
             this.yVel = -this.yVel
         }
 
         //Förlora liv 
-        if(this.y > this.game.height + this.size/ 2){
+        if(this.y > this.game.height + this.size){
             this.y = this.player.y - this.size/ 2
             this.x = this.player.x + this.player.width/ 2
             this.yVel = -this.yVel
@@ -132,9 +149,7 @@ class Ball{
         this.y += this.yVel
     }
     draw(ctx){
-        ctx.beginPath()
-        ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI)
-        ctx.fill()
+        ctx.fillRect(this.x, this.y, this.size, this.size)
     }
 }
 
@@ -142,7 +157,7 @@ class Brick{
     constructor(ball, game, xV, yV){
         this.game = game
         this.ball = ball
-        this.pos = this.game.posCalc  //tar en input från class Game 
+         
         this.yV = yV
         this.xV = xV  
 
@@ -164,7 +179,11 @@ class Brick{
             20,
             140,
             260,
-            380
+            380,
+            500,
+            620,
+            740,
+            860,
         ]
 
         this.width = 100
@@ -176,16 +195,17 @@ class Brick{
     }
     update(){
 
-        console.log(this.y);
-
-        if( this.x + this.width > this.ball.map(e => e.x)[0] &&
+        if( this.x + this.width > this.ball.map(e => e.x)[0] - this.ball.map(e => e.size)[0] / 2 &&
             this.x < this.ball.map(e => e.x)[0] &&
             this.y < this.ball.map(e => e.y)[0] &&
-            this.y + this.height > this.ball.map(e => e.y)[0]){
-
+            this.y + this.height > this.ball.map(e => e.y)[0] - this.ball.map(e => e.size)[0] / 2){
+            
+            turn = true
             this.markedForDelete = true
+            this.game.bricksOnScreen--
         }
         else{
+            turn = false
             this.markedForDelete = false
         }
     }
