@@ -9,7 +9,7 @@ const range = document.getElementById('range')
 
 //en klass som sköter updatering och ritning av spelets object och även har koll på storlek och positioner
 
-let turn = false
+let turnBall = false
 
 class Game{
     constructor(ctx, width, height){
@@ -18,21 +18,18 @@ class Game{
         this.height = height
         this.range = range
 
-        this.level = {/*lägga in lista med egenskaper för varje level (5 levlar)*/}
+        this.level = 0
+
+        this.levels = {/*lägga in lista med egenskaper för varje level (5 levlar)*/}
 
         this.player = new Player(this, range.value)
 
         this.bricks = []
-        this.brickCount = 4 //antal bricks(ska bero på level)
-
-        //this.brickCount = 8 //antal bricks(ska bero på level) | en rad är 8 st
 
         this.bricksOnScreen = 90
-        this.rowAmount = 1
-        this.rowCheck = 0
 
-        this.ballInterval = 300
-        this.ballTimer = 300
+        this.ballInterval = 110
+        this.ballTimer = 0
         this.ballCount = 1 // antal bollar (ska bero på powerup)
         this.balls = [] 
 
@@ -59,12 +56,16 @@ class Game{
         this.balls.forEach(object => object.update())
       
         //block | lösa att bollarna inte hinner spawna
-        if(this.brickCount > this.bricks.length){
-            this.bricks.push(new Brick(this.balls, this))
-        } else if(!this.brickCount > this.bricks.length){
-            this.brickCount++
-        }
-        
+        if(this.bricks.length < this.bricksOnScreen){
+            if(this.iX < 9){
+            this.bricks.push(new Brick(this.balls, this, this.iX, this.iY)) 
+            this.iX++
+            }else{
+                this.iY++
+                this.iX = 0
+            }
+        }    
+                        
         this.bricks.forEach(object => object.update())
 
         this.bricks = this.bricks.filter(object => !object.markedForDelete)
@@ -113,8 +114,9 @@ class Ball{
     }
     update(){
 
-        if(turn){
-            this.xVel = -this.xVel
+        if(turnBall){
+            this.yVel = -this.yVel
+            turnBall = false
         }
 
         if(this.x < 0){
@@ -151,13 +153,45 @@ class Ball{
 }
 
 class Brick{
-    constructor(ball, game){
-        this.ball = ball
+    constructor(ball, game, xV, yV){
         this.game = game
-        this.width = 40
-        this.height = 40
-        this.x = Math.random()*this.game.width - this.width / 2 
-        this.y = 100
+        this.ball = ball
+         
+        this.yV = yV
+        this.xV = xV  
+
+        this.rows = [   
+            20,
+            50,
+            80,
+            110,
+            140,
+            170,
+            200,
+            230,
+            260,
+            290,
+            310
+        ]
+        
+        this.collumns = [  
+            20,
+            140,
+            260,
+            380,
+            500,
+            620,
+            740,
+            860,
+        ]
+
+        this.width = 100
+        this.height = 20
+        this.x = this.collumns[xV]
+        this.y = this.rows[yV]
+
+        this.damage = 1
+        this.hits = 0
 
         this.markedForDelete = false
     }
@@ -168,30 +202,22 @@ class Brick{
             this.y < this.ball.map(e => e.y)[0] &&
             this.y + this.height > this.ball.map(e => e.y)[0] - this.ball.map(e => e.size)[0] / 2){
             
-            turn = true
-            this.markedForDelete = true
-            this.game.brickCount--
+            turnBall = true
+            this.hits++
+
+            this.game.bricksOnScreen--
         }
         else{
-            turn = false
             this.markedForDelete = false
         }
+
+        if(this.hits == this.damage){
+            this.markedForDelete = true
+        }
+        
     }
     draw(ctx){
         ctx.fillRect(this.x, this.y, this.width ,this.height)
-    }
-}
-
-class LevelOneBrick extends Brick{
-    constructor(ball, game){
-        super(ball, game)
-        this.damage = 1
-    }
-    update(){
-        super.update()
-    }
-    draw(ctx){
-        super.draw(ctx)
     }
 }
 
