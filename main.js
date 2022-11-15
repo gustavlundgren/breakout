@@ -20,8 +20,13 @@ class Game{
         this.player = new Player(this, range.value)
 
         this.bricks = []
-        this.brickCount = 8 * 2 //antal bricks(ska bero på level) | en rad är 8 st
-        this.posCalc = 10
+        this.brickCount = 8 //antal bricks(ska bero på level) | en rad är 8 st
+
+        this.brickX = 0
+
+        this.posCalc = 20
+        this.rowAmount = 1
+        this.rowCheck = 0
 
         this.ballInterval = 300
         this.ballTimer = 300
@@ -33,32 +38,37 @@ class Game{
         this.player.update()
 
         if(this.ballTimer > this.ballInterval && this.balls.length < this.ballCount){
+
             this.balls.push(new Ball(this.player, this))
             this.ballTimer = 0
+
         }else{
             this.ballTimer++
+            
         }
           
         
         this.balls.forEach(object => object.update())
       
         //block | lösa att bollarna inte hinner spawna
+        if(this.rowCheck < this.rowAmount){
 
-        if(this.brickCount > this.bricks.length){
-            
-            this.posCalc += 120
+            if(this.bricks.length % this.brickCount == 0){
 
-            if(this.bricks.length % 8 == 0){
-                this.posCalc = 10
-            }
+                for(let i = 0; i < this.brickCount; i++){
+                    this.bricks.push(new Brick(this.balls, this, this.rowAmount, this.brickX))
+                    if(this.rowAmount < 10) this.rowAmount++
+                }
+                
+            } else if(!this.bricks.length % this.brickCount == 0){
+                this.brickCount++
+                this.brickX += 110
+            } 
+
+        }else{
             
-            this.bricks.push(new Brick(this.balls, this)) 
-            
-        } else if(!this.brickCount > this.bricks.length){
-            this.brickCount++
-        } 
-        
-        console.log(this.posCalc);
+            this.brickCount = 8
+        }
 
         this.bricks.forEach(object => object.update())
 
@@ -144,13 +154,13 @@ class Ball{
 }
 
 class Brick{
-    constructor(ball, game){
+    constructor(ball, game, row, x){
         this.game = game
         this.ball = ball
         this.pos = this.game.posCalc  //tar en input från class Game 
 
-        this.row = 0  // gör om inputen till en output i listan
-        this.rows = [
+        this.row = row  // gör om inputen till en output i listan
+        this.rows = [   0,
                         20,
                         50,
                         80,
@@ -166,19 +176,15 @@ class Brick{
 
         this.width = 100
         this.height = 20
-        this.x = 0
+        this.x = x
         this.y = 20
        
 
         this.markedForDelete = false
     }
     update(){
-
-        this.x = this.pos
-
-        if(this.game.bricks.length % 8 == 0 && this.y < this.rows[10]){
-            this.y += 20
-        }
+        
+        this.y = this.rows[this.row]
 
         console.log('row = ', this.row);
 
