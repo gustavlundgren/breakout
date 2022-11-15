@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 
 *,
 *::before,
@@ -20,6 +21,98 @@ body {
     min-height: 100vh;
     background: var(--background);
 }
+
+.menu{
+    width: 100%;
+    height: 100vh;
+    background-color: #524f4f;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    visibility: visible;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.menu .white{
+    position: absolute;
+    top: 10px;
+    left: 21%;
+    font-size: 200px;
+    font-family: 'Anton', sans-serif;
+    color: white;
+}
+
+.menu .black{
+    position: absolute;
+    top: 10px;
+    font-size: 200px;
+    font-family: 'Anton', sans-serif;
+}
+
+.menu > button {
+	width: 400px;
+    height: 130px;
+    box-shadow: 13px 15px 94px -3px rgba(0,0,0,0.76);
+-webkit-box-shadow: 13px 15px 94px -3px rgba(0,0,0,0.76);
+-moz-box-shadow: 13px 15px 94px -3px rgba(0,0,0,0.76); 
+	background:linear-gradient(to bottom, #ffffff 5%, #afafaf 100%);
+	background-color:#ffffff;
+	border-radius:15px;
+	border:1px solid #afafaf;
+	display:inline-block;
+	cursor:pointer;
+	color:#000000;
+	font-size:17px;
+	padding: 0px 25px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #9e9fa8;
+}
+button:hover {
+	background:linear-gradient(to bottom, #afafaf 5%, #ffffff 100%);
+	background-color: #afafaf;
+}
+button:active {
+	position:relative;
+    scale: 0.9;
+	top:1px;
+}
+
+#start-btn{
+    font-size: 90px;
+    font-family: 'Anton', sans-serif;
+}
+
+
+select{
+    margin-top: 50px;
+    width: 400px;
+    height: 60px;
+    -webkit-appearance: none;
+    outline: none;
+    box-shadow: 13px 15px 94px -3px rgba(0,0,0,0.76);
+-webkit-box-shadow: 13px 15px 94px -3px rgba(0,0,0,0.76);
+-moz-box-shadow: 13px 15px 94px -3px rgba(0,0,0,0.76); 
+    background:linear-gradient(to bottom, #ffffff 5%, #afafaf 100%);
+    background-color:#ffffff;
+    border-radius:15px;
+    border:1px solid #afafaf;
+    display:inline-block;
+    cursor:pointer;
+    color:#000000;
+    font-family:Arial;
+    font-size:17px;
+    padding: 0px 25px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #9e9fa8;
+}
+
+
+
 
 canvas{
     width: 1000px;

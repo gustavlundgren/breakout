@@ -7,8 +7,12 @@ canvas.height = 800
 //försöka få inte global kanske
 const range = document.getElementById('range')
 
-//en klass som sköter updatering och ritning av spelets object och även har koll på storlek och positioner
+const menu = document.getElementById('menu')
+const startBtn = document.getElementById('start-btn')
+const levelSelect = document.getElementById('level-select')
 
+//en klass som sköter updatering och ritning av spelets object och även har koll på storlek och positioner
+let isPaused = true
 let turnBall = false
 
 class Game{
@@ -254,14 +258,24 @@ const game = new Game(ctx, canvas.width, canvas.height)
 
 //animations function
 function main(){
+    if(!isPaused){
+
+    
     //tar bort tidigare scen
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     //ritar ut spelet
     game.update()
     game.draw()
-
+    }
     requestAnimationFrame(main)
 }
 
+
 main()
+
+
+startBtn.addEventListener('click', function(){
+    menu.style.visibility='hidden'
+    isPaused = false
+})
