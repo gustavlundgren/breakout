@@ -20,8 +20,8 @@ class Game{
         this.player = new Player(this, range.value)
 
         this.bricks = []
-        this.brickCount = 4 //antal bricks(ska bero på level)
-        this.posCalc = 0
+        this.brickCount = 16 //antal bricks(ska bero på level) | en rad är 8 st
+        this.posCalc = 20
 
         this.ballInterval = 300
         this.ballTimer = 300
@@ -44,14 +44,18 @@ class Game{
       
         //block | lösa att bollarna inte hinner spawna
 
-        if(this.brickCount > this.bricks.length){
-            this.posCalc++
-            this.bricks.push(new Brick(this.balls, this,this.posCalc))
+        if(this.brickCount > this.bricks.length && this.posCalc < 860){
+            this.posCalc += 120
+            this.bricks.push(new Brick(this.balls, this,this.posCalc)) 
+            
         } else if(!this.brickCount > this.bricks.length){
             this.brickCount++
-            this.posCount = 0
+        } else{
+            this.posCalc = 20
         }
         
+        console.log(this.posCalc);
+
         this.bricks.forEach(object => object.update())
 
         this.bricks = this.bricks.filter(object => !object.markedForDelete)
@@ -141,69 +145,35 @@ class Brick{
         this.ball = ball
         this.pos = pos  //tar en input från class Game 
 
-        this.position;  // gör om inputen till en output i listan
-        this.positions = {position1: [20, 20],
-                          position2: [140, 20],
-                          position3: [260, 20],
-                          position4: [380, 20]}
+        this.row = 0  // gör om inputen till en output i listan
+        this.rows = [
+                        20,
+                        140,
+                        260,
+                        380,
+                        500,
+                        620,
+                        740,
+                        860
+                    ]
 
         this.width = 100
         this.height = 100
-        this.x = Math.random() * this.game.width - this.width/ 2
-        this.y = 100
+        this.x = this.pos
+        this.y = 20
        
 
         this.markedForDelete = false
     }
     update(){
-        switch(this.pos){
-            case 1:
-                this.position = {
-                    x: this.positions.position1[0], 
-                    y: this.positions.position1[1]
-                }
 
-                this.x = this.position.x
-                this.y = this.position.y
-
-                console.log('1', this.x);
-                break 
-            case 2:
-                this.position = {
-                    x: this.positions.position2[0], 
-                    y: this.positions.position2[1]
-                }
-
-                this.x = this.position.x
-                this.y = this.position.y
-
-                console.log('2', this.x);
-                break
-            case 3:
-                this.position = {
-                    x: this.positions.position3[0], 
-                    y: this.positions.position3[1]
-                }
-    
-                this.x = this.position.x
-                this.y = this.position.y
-                
-                console.log('3', this.x);
-                break
-            case 4:
-                this.position = {
-                    x: this.positions.position4[0], 
-                    y: this.positions.position4[1]
-                }
-    
-                this.x = this.position.x
-                this.y = this.position.y
-
-                console.log('4', this.x);
-                break
-            default: 
-                console.log('switch error');
+        console.log('pos = ',this.pos);
+        if(this.pos == 860){
+            this.row++
         }
+
+        console.log('row = ', this.row);
+        this.y = this.rows[this.row]
 
         if( this.x + this.width > this.ball.map(e => e.x)[0] &&
             this.x < this.ball.map(e => e.x)[0] &&
@@ -237,8 +207,8 @@ class LevelOneBrick extends Brick{
 
 //olika typer av block
 class LevelTwoBrick extends Brick{
-    constructor(ball){
-        super(ball)
+    constructor(ball, game, pos){
+        super(ball, game, pos)
         this.damage = 2
     }
     update(){
@@ -250,8 +220,8 @@ class LevelTwoBrick extends Brick{
 }
 
 class LevelThreeBrick extends Brick{
-    constructor(ball){
-        super(ball)
+    constructor(ball, game, pos){
+        super(ball, game, pos)
         this.damage = 3
     }
     update(){
