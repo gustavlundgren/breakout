@@ -32,15 +32,8 @@ class Game{
         this.ballCount = 1 // antal bollar (ska bero på powerup)
         this.balls = [] 
     }
-    brickCollumn(x){
-        if(this.rowCheck < this.rowAmount){
-            this.bricks.push(new Brick(this.balls, this, this.rowAmount, x, y))
-
-            if(this.rowAmount < 10){
-                this.rowAmount++
-            }
-        }
-    }
+            
+    
     update(){
         // bollar
         this.player.update()
@@ -58,75 +51,10 @@ class Game{
         this.balls.forEach(object => object.update())
       
         //block | lösa att bollarna inte hinner spawna
-
-            this.brickCollumn(0)
-            this.brickCollumn(0)
-            this.brickCollumn(0)
-            this.brickCollumn(0)
-            this.brickCollumn(0)
-            this.brickCollumn(0)
-            this.brickCollumn(0)
-            this.brickCollumn(0)
-            this.brickCollumn(0)
-            this.brickCollumn(0)
-            
-            this.rowAmount = 1
-            this.rowCheck = 0
-
-            this.brickCollumn(1)
-            this.brickCollumn(1)
-            this.brickCollumn(1)
-            this.brickCollumn(1)
-            this.brickCollumn(1)
-            this.brickCollumn(1)
-            this.brickCollumn(1)
-            this.brickCollumn(1)
-            this.brickCollumn(1)
-            this.brickCollumn(1)
-
-            this.rowAmount = 1
-            this.rowCheck = 0
-
-            this.brickCollumn(2)
-            this.brickCollumn(2)
-            this.brickCollumn(2)
-            this.brickCollumn(2)
-            this.brickCollumn(2)
-            this.brickCollumn(2)
-            this.brickCollumn(2)
-            this.brickCollumn(2)
-            this.brickCollumn(2)
-            this.brickCollumn(2)
-
-            this.rowAmount = 1
-            this.rowCheck = 0
-
-            this.brickCollumn(3)
-            this.brickCollumn(3)
-            this.brickCollumn(3)
-            this.brickCollumn(3)
-            this.brickCollumn(3)
-            this.brickCollumn(3)
-            this.brickCollumn(3)
-            this.brickCollumn(3)
-            this.brickCollumn(3)
-            this.brickCollumn(3)
-
-            this.rowAmount = 1
-            this.rowCheck = 0
-
-            this.brickCollumn(4)
-            this.brickCollumn(4)
-            this.brickCollumn(4)
-            this.brickCollumn(4)
-            this.brickCollumn(4)
-            this.brickCollumn(4)
-            this.brickCollumn(4)
-            this.brickCollumn(4)
-            this.brickCollumn(4)
-            this.brickCollumn(4)
-
-
+        if(this.bricks.length < 1){
+            this.bricks.push(new Brick(this.balls, this, 0, 0))
+        }    
+                        
         this.bricks.forEach(object => object.update())
 
         this.bricks = this.bricks.filter(object => !object.markedForDelete)
@@ -211,13 +139,14 @@ class Ball{
 }
 
 class Brick{
-    constructor(ball, game, x, y){
+    constructor(ball, game, xV, yV){
         this.game = game
         this.ball = ball
         this.pos = this.game.posCalc  //tar en input från class Game 
+        this.yV = yV
+        this.xV = xV  
 
         this.rows = [   
-            0,
             20,
             50,
             80,
@@ -240,16 +169,14 @@ class Brick{
 
         this.width = 100
         this.height = 20
-        this.x = this.collumns[x]
-        this.y = this.rows[y]
+        this.x = this.collumns[xV]
+        this.y = this.rows[yV]
 
         this.markedForDelete = false
     }
     update(){
-        
-       
 
-        //console.log('row = ', this.row);
+        console.log(this.y);
 
         if( this.x + this.width > this.ball.map(e => e.x)[0] &&
             this.x < this.ball.map(e => e.x)[0] &&
