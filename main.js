@@ -11,6 +11,9 @@ const menu = document.getElementById('menu')
 const startBtn = document.getElementById('start-btn')
 const levelSelect = document.getElementById('level-select')
 
+const health1 = document.getElementById('health-1')
+const health2 = document.getElementById('health-2')
+
 //en klass som sköter updatering och ritning av spelets object och även har koll på storlek och positioner
 let isPaused = true
 let turnBall = false
@@ -41,8 +44,23 @@ class Game{
         this.iX = 0
         this.iY = 0
     }
-            
-    
+    reset(){
+
+        this.player = new Player(this, range.value)
+
+        this.bricks = []
+
+        this.bricksOnScreen = 90
+
+        this.ballInterval = 110
+        this.ballTimer = 0
+        this.ballCount = 1 
+        this.balls = [] 
+
+
+        this.iX = 0
+        this.iY = 0
+    }
     update(){
         // bollar
         this.player.update()
@@ -115,6 +133,8 @@ class Ball{
         
         this.xVel = 3
         this.yVel = -3
+
+        this.health = 2
     }
     update(){
 
@@ -140,6 +160,32 @@ class Ball{
             this.y = this.player.y - this.size/ 2
             this.x = this.player.x + this.player.width/ 2
             this.yVel = -this.yVel
+
+            this.health--
+        }
+
+        if(this.health == 0){
+            isPaused = true
+            alert('törsk')
+            menu.style.visibility = 'visible'
+            this.health = 2
+
+            game.reset()
+        }
+
+        switch(this.health){
+            case 0:
+                health1.src='heart-empty.png'
+                health2.src='heart-empty.png'
+                break
+            case 1:
+                health1.src='heart.png'
+                health2.src='heart-empty.png'
+                break
+            case 2:
+                health1.src='heart.png'
+                health2.src='heart.png'
+                break
         }
 
         //kolla efter kollisoin med spelaren
