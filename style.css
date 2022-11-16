@@ -38,18 +38,23 @@ body {
     flex-direction: column;
 }
 
+.title{
+  position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%, -5%);  
+}
+
 .menu .white{
     position: absolute;
-    top: 10px;
-    left: 21%;
+    top: 0%;
+    left: 2%;
     font-size: 200px;
     font-family: 'Anton', sans-serif;
     color: white;
 }
 
 .menu .black{
-    position: absolute;
-    top: 10px;
     font-size: 200px;
     font-family: 'Anton', sans-serif;
 }
@@ -161,14 +166,8 @@ canvas{
   border: 5px solid	#696969;
 }
 
-#health-1{
+.health{
     position: absolute;
     top: 75%;
     left: 8%;
-}
-
-#health-2{
-    position: absolute;
-    top: 75%;
-    left: 13%;
 }

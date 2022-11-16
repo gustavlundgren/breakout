@@ -11,9 +11,11 @@
     
     <div class="menu" id="menu">
 
-        <h1 class="black">BREAKOUT</h1>
-        <h1 class="white">BREAKOUT</h1>
-        
+        <div class="title">
+            <h1 class="black">BREAKOUT</h1>
+            <h1 class="white">BREAKOUT</h1>
+        </div>
+
         <button id="start-btn">START</button>
         <select name="level" id="level-select">LEVEL
             <option value="1">level 1</option>
@@ -26,9 +28,10 @@
     
     <Input  class="range" type="range" value="500" min="0" max="1000" id="range"></Input>
 
-    <img src="heart-empty.png" id="health-1">
-    <img src="heart-empty.png" id="health-2">
- 
+    <div class="health">
+        <img src="heart-empty.png" id="health-1">
+        <img src="heart-empty.png" id="health-2">
+    </div>
     <script src="main.js"></script>
 </body>
 </html>

@@ -361,9 +361,10 @@ class LevelThreeBrick extends Brick{
 const game = new Game(ctx, canvas.width, canvas.height)
 
 //animations function
-function main(){
+function main(timestamp){
     if(!isPaused){
 
+    let deltaTime =
     
     //tar bort tidigare scen
     ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -376,7 +377,7 @@ function main(){
 }
 
 
-main()
+main(0)
 
 
 startBtn.addEventListener('click', function(){
