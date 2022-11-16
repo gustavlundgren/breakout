@@ -17,6 +17,7 @@ const health2 = document.getElementById('health-2')
 //en klass som sköter updatering och ritning av spelets object och även har koll på storlek och positioner
 let isPaused = true
 let turnBall = false
+let lastTime = 0
 
 // skapa en timer och highscore på levlarna
 
@@ -30,15 +31,17 @@ class Game{
         this.firstRun = true
 
         this.levelCheckStop = false
-        this.levels = { one: {bricksOnScreen: 32, }, two: {bricksOnScreen: 56, }, three: {bricksOnScreen: 72, }   /*lägga in lista med egenskaper för varje level (3 levlar)*/}
+        this.levels = { one: {bricksOnScreen: 32, orangeRows: 1, redRows: 1}, two: {bricksOnScreen: 56, orangeRows: 3, redRows: 2}, three: {bricksOnScreen: 72, orangeRows: 4, redRows: 3}   /*lägga in lista med egenskaper för varje level (3 levlar)*/}
 
         this.player = new Player(this, range.value)
 
         this.bricks = []
 
         this.bricksOnScreen
+        this.redRows
+        this.orangeRows
 
-        this.ballInterval = 110
+        this.ballInterval = 500
         this.ballTimer = 0
         this.ballCount = 1 // antal bollar (ska bero på powerup)
         this.balls = [] 
@@ -60,19 +63,25 @@ class Game{
             //kod att kör en gång
             if(levelSelect.value == 1){ 
                 this.bricksOnScreen = this.levels.one.bricksOnScreen
+                this.redRows = this.levels.one.redRows
+                this.orangeRows = this.levels.one.orangeRows
             }
     
             if(levelSelect.value == 2){ 
                 this.bricksOnScreen = this.levels.two.bricksOnScreen
+                this.redRows = this.levels.two.redRows
+                this.orangeRows = this.levels.two.orangeRows
             }
     
             if(levelSelect.value == 3){ 
                 this.bricksOnScreen = this.levels.three.bricksOnScreen
+                this.redRows = this.levels.three.redRows
+                this.orangeRows = this.levels.three.orangeRows
             }
             this.levelCheckStop = true
         }
 
-        this.ballInterval = 110
+        this.ballInterval = 1000
         this.ballTimer = 0
         this.ballCount = 1 
         this.balls = [] 
@@ -83,7 +92,7 @@ class Game{
 
         
     }
-    update(){
+    update(deltatime){
 
         //level check
        
@@ -91,22 +100,28 @@ class Game{
             //kod att kör en gång
             if(levelSelect.value == 1){ 
                 this.bricksOnScreen = this.levels.one.bricksOnScreen
+                this.redRows = this.levels.one.redRows
+                this.orangeRows = this.levels.one.orangeRows
             }
     
             if(levelSelect.value == 2){ 
                 this.bricksOnScreen = this.levels.two.bricksOnScreen
+                this.redRows = this.levels.two.redRows
+                this.orangeRows = this.levels.two.orangeRows
             }
     
             if(levelSelect.value == 3){ 
                 this.bricksOnScreen = this.levels.three.bricksOnScreen
+                this.redRows = this.levels.three.redRows
+                this.orangeRows = this.levels.three.orangeRows
+
             }
             this.levelCheckStop = true
             //this.firstRun = false
         }
     
 
-        this.player.update()
-
+        this.player.update(deltatime)
         // bollar
         if(this.ballTimer > this.ballInterval && this.balls.length < this.ballCount){
 
@@ -114,14 +129,38 @@ class Game{
             this.ballTimer = 0
 
         }else{
-            this.ballTimer++ 
+            this.ballTimer += deltatime 
         }
           
         
-        this.balls.forEach(object => object.update())
+        this.balls.forEach(object => object.update(deltatime))
       
+        console.log(this.bricksOnScreen);
+
         //block | lösa att bollarna inte hinner spawna
         if(this.bricks.length < this.bricksOnScreen){
+
+        if(this.bricks.length < 8*this.redRows){
+            if(this.iX < 8){
+            this.bricks.push(new LevelThreeBrick(this.balls, this, this.iX, this.iY)) 
+            this.iX++
+            }else{
+                this.iY++
+                this.iX = 0
+            }
+        } 
+        
+        if(this.bricks.length >= 8*this.redRows && this.bricks.length < (8*this.redRows + 8*this.orangeRows)){
+            if(this.iX < 8){
+            this.bricks.push(new LevelTwoBrick(this.balls, this, this.iX, this.iY)) 
+            this.iX++
+            }else{
+                this.iY++
+                this.iX = 0
+            }
+        }
+
+        if(this.bricks.length >= (8*this.redRows + 8*this.orangeRows)){
             if(this.iX < 8){
             this.bricks.push(new Brick(this.balls, this, this.iX, this.iY)) 
             this.iX++
@@ -129,9 +168,12 @@ class Game{
                 this.iY++
                 this.iX = 0
             }
-        }    
-                        
-        this.bricks.forEach(object => object.update())
+
+        }
+
+    }
+    
+        this.bricks.forEach(object => object.update(deltatime))
 
         this.bricks = this.bricks.filter(object => !object.markedForDelete)
 
@@ -159,7 +201,7 @@ class Player{
         this.width = 80
         this.height = 20
     }
-    update(){
+    update(deltatime){
         this.x = range.value - this.width / 2
         range.max = `${this.game.width - this.width / 2}`
         range.min = `${this.width / 2}`
@@ -176,6 +218,8 @@ class Ball{
     constructor(player, game){
         this.game = game
         this.player = player
+        this.sfx = new Audio()
+        this.sfx.src="ping_pong_8bit_plop.ogg"
 
         this.size = 10
         this.x = this.player.x + this.player.width/ 2
@@ -186,7 +230,7 @@ class Ball{
 
         this.health = 2
     }
-    update(){
+    update(deltatime){
 
         if(turnBall){
             this.yVel = -this.yVel
@@ -195,14 +239,17 @@ class Ball{
 
         if(this.x < 0){
             this.xVel = -this.xVel
+            this.sfx.play()
         }
 
         if(this.x > this.game.width - this.size){
             this.xVel = -this.xVel
+            this.sfx.play()
         }
 
         if(this.y < 0){
             this.yVel = -this.yVel
+            this.sfx.play()
         }
 
         //Förlora liv 
@@ -240,6 +287,7 @@ class Ball{
         if(this.y + this.size / 2 > this.player.y && this.y && this.y < this.player.y + this.player.height && this.x > this.player.x && this.x < this.player.x + this.player.width){
             //studs ändra så att vinkeln blir anorlunda beroende på vart på rectangeln man träffar
             this.yVel = -this.yVel 
+            this.sfx.play()
         }
 
         this.x += this.xVel
@@ -294,9 +342,12 @@ class Brick{
 
         this.color = 'chartreuse'
 
+        this.sfx = new Audio()
+        this.sfx.src="ping_pong_8bit_beeep.ogg"
+
         this.markedForDelete = false
     }
-    update(){
+    update(deltatime){
 
         if( this.x + this.width > this.ball.map(e => e.x)[0] - this.ball.map(e => e.size)[0] / 2 &&
             this.x < this.ball.map(e => e.x)[0] &&
@@ -306,7 +357,7 @@ class Brick{
             turnBall = true
             this.hits++
 
-            this.game.bricksOnScreen--
+            this.sfx.play()
         }
         else{
             this.markedForDelete = false
@@ -314,6 +365,7 @@ class Brick{
 
         if(this.hits == this.damage){
             this.markedForDelete = true
+            this.game.bricksOnScreen--
         }
         
     }
@@ -334,8 +386,12 @@ class LevelTwoBrick extends Brick{
         this.damage = 2
         this.color = 'orange'
     }
-    update(){
-        super.update()
+    update(deltatime){
+        super.update(deltatime)
+
+        if(this.damage - this.hits == 1){
+            this.color = 'chartreuse'
+        }
     }
     draw(ctx){
         super.draw(ctx)
@@ -348,39 +404,47 @@ class LevelThreeBrick extends Brick{
         this.damage = 3
         this.color = 'maroon'
     }
-    update(){
-        super.update()
+    update(deltatime){
+        super.update(deltatime)
+
+        if(this.damage - this.hits == 2){
+            this.color = 'orange'
+        }
+
+        if(this.damage - this.hits == 1){
+            this.color = 'chartreuse'
+        }
     }
     draw(ctx){
         super.draw(ctx)
     }
 }
 
-
 //Skapar ett object från min klass "Game"
 const game = new Game(ctx, canvas.width, canvas.height)
 
 //animations function
-function main(){
+function main(timestamp){
     if(!isPaused){
 
+        let deltatime = timestamp - lastTime
+        lastTime = timestamp
     
-    //tar bort tidigare scen
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+        //tar bort tidigare scen
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    //ritar ut spelet
-    game.update()
-    game.draw()
+        //ritar ut spelet
+        game.update(deltatime)
+        game.draw()
     }
     requestAnimationFrame(main)
 }
 
-
-main()
-
+main(0)
 
 startBtn.addEventListener('click', function(){
     menu.style.visibility='hidden'
     isPaused = false
     game.reset()
+    range.value = 500
 })
