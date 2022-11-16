@@ -18,6 +18,8 @@ const health2 = document.getElementById('health-2')
 let isPaused = true
 let turnBall = false
 
+// skapa en timer och highscore på levlarna
+
 class Game{
     constructor(ctx, width, height){
         this.ctx = ctx
@@ -132,6 +134,12 @@ class Game{
         this.bricks.forEach(object => object.update())
 
         this.bricks = this.bricks.filter(object => !object.markedForDelete)
+
+        if(this.bricksOnScreen == 0){
+            isPaused = true
+            alert('dub')
+            menu.style.visibility = 'visible'
+        }
     }
     draw(){
         //ritar ut allt
@@ -157,6 +165,7 @@ class Player{
         range.min = `${this.width / 2}`
     }
     draw(ctx){
+        ctx.fillStyle = 'black'
         ctx.fillRect(this.x, this.y, this.width, this.height)
     }
 }
@@ -237,6 +246,7 @@ class Ball{
         this.y += this.yVel
     }
     draw(ctx){
+        ctx.fillStyle = 'black'
         ctx.fillRect(this.x, this.y, this.size, this.size)
     }
 }
@@ -282,6 +292,8 @@ class Brick{
         this.damage = 1
         this.hits = 0
 
+        this.color = 'chartreuse'
+
         this.markedForDelete = false
     }
     update(){
@@ -306,15 +318,21 @@ class Brick{
         
     }
     draw(ctx){
+        ctx.fillStyle = this.color
         ctx.fillRect(this.x, this.y, this.width ,this.height)
+
+        ctx.fillStyle = 'black'
+        ctx.font = '1000 20px serif';
+        ctx.fillText(`${this.damage - this.hits}`, this.x + this.width / 2 - 10, this.y + 15)
     }
 }
 
 //olika typer av block
 class LevelTwoBrick extends Brick{
-    constructor(ball, game){
-        super(ball, game)
+    constructor(ball, game, xV, yV){
+        super(ball, game, xV, yV)
         this.damage = 2
+        this.color = 'orange'
     }
     update(){
         super.update()
@@ -325,9 +343,10 @@ class LevelTwoBrick extends Brick{
 }
 
 class LevelThreeBrick extends Brick{
-    constructor(ball, game){
-        super(ball, game)
+    constructor(ball, game, xV, yV){
+        super(ball, game, xV, yV)
         this.damage = 3
+        this.color = 'maroon'
     }
     update(){
         super.update()
