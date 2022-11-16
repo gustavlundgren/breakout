@@ -25,15 +25,16 @@ class Game{
         this.height = height
         this.range = range
 
-        this.level = 0
+        this.firstRun = true
 
-        this.levels = {/*lägga in lista med egenskaper för varje level (5 levlar)*/}
+        this.levelCheckStop = false
+        this.levels = { one: {bricksOnScreen: 32, }, two: {bricksOnScreen: 56, }, three: {bricksOnScreen: 72, }   /*lägga in lista med egenskaper för varje level (3 levlar)*/}
 
         this.player = new Player(this, range.value)
 
         this.bricks = []
 
-        this.bricksOnScreen = 90
+        this.bricksOnScreen
 
         this.ballInterval = 110
         this.ballTimer = 0
@@ -50,7 +51,24 @@ class Game{
 
         this.bricks = []
 
-        this.bricksOnScreen = 90
+        this.levelCheckStop = false
+
+        console.log(levelSelect.value);
+        if(!this.levelCheckStop ){
+            //kod att kör en gång
+            if(levelSelect.value == 1){ 
+                this.bricksOnScreen = this.levels.one.bricksOnScreen
+            }
+    
+            if(levelSelect.value == 2){ 
+                this.bricksOnScreen = this.levels.two.bricksOnScreen
+            }
+    
+            if(levelSelect.value == 3){ 
+                this.bricksOnScreen = this.levels.three.bricksOnScreen
+            }
+            this.levelCheckStop = true
+        }
 
         this.ballInterval = 110
         this.ballTimer = 0
@@ -60,11 +78,34 @@ class Game{
 
         this.iX = 0
         this.iY = 0
+
+        
     }
     update(){
-        // bollar
+
+        //level check
+       
+        if(!this.levelCheckStop){
+            //kod att kör en gång
+            if(levelSelect.value == 1){ 
+                this.bricksOnScreen = this.levels.one.bricksOnScreen
+            }
+    
+            if(levelSelect.value == 2){ 
+                this.bricksOnScreen = this.levels.two.bricksOnScreen
+            }
+    
+            if(levelSelect.value == 3){ 
+                this.bricksOnScreen = this.levels.three.bricksOnScreen
+            }
+            this.levelCheckStop = true
+            //this.firstRun = false
+        }
+    
+
         this.player.update()
 
+        // bollar
         if(this.ballTimer > this.ballInterval && this.balls.length < this.ballCount){
 
             this.balls.push(new Ball(this.player, this))
@@ -79,7 +120,7 @@ class Game{
       
         //block | lösa att bollarna inte hinner spawna
         if(this.bricks.length < this.bricksOnScreen){
-            if(this.iX < 9){
+            if(this.iX < 8){
             this.bricks.push(new Brick(this.balls, this, this.iX, this.iY)) 
             this.iX++
             }else{
@@ -169,8 +210,6 @@ class Ball{
             alert('törsk')
             menu.style.visibility = 'visible'
             this.health = 2
-
-            game.reset()
         }
 
         switch(this.health){
@@ -324,4 +363,5 @@ main()
 startBtn.addEventListener('click', function(){
     menu.style.visibility='hidden'
     isPaused = false
+    game.reset()
 })
