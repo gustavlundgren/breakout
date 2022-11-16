@@ -75,10 +75,11 @@ body {
 button:hover {
 	background:linear-gradient(to bottom, #afafaf 5%, #ffffff 100%);
 	background-color: #afafaf;
+    scale: 1.01;
 }
 button:active {
 	position:relative;
-    scale: 0.9;
+    scale: 0.95;
 	top:1px;
 }
 
