@@ -284,7 +284,7 @@ class Ball{
         }
 
         //kolla efter kollisoin med spelaren
-        if(this.y + this.size / 2 > this.player.y){
+        if(this.y + this.size / 2 > this.player.y && this.y + this.size / 2 < this.player.y + this.player.height){
 
            if(this.x + this.size > this.player.x && this.x + this.size < this.player.x + this.player.width){
                 
@@ -293,12 +293,12 @@ class Ball{
            }
            
             //studs ändra så att vinkeln blir anorlunda beroende på vart på rectangeln man träffar
-            if(this.x + this.size > this.player.x + this.player.width / 2){
-                this.xVel = 3
+            if(this.x + this.size > this.player.x + this.player.width / 2 && this.x + this.size /2 < this.player.x + this.player.width){
+                this.xVel = vector(60)
             }
 
             if(this.x > this.player.x && this.x + this.size < this.player.x + this.player.width / 2 ){
-                this.xVel = -3
+                this.xVel = -vector(60)
             }
         }
 
@@ -463,3 +463,11 @@ startBtn.addEventListener('click', function(){
     game.reset()
     range.value = 500
 })
+
+//funktion som skapar en vektor av x oxh y
+function vector(angle){
+    let newAngle = angle/(180/Math.PI)
+    let xVel = 3/(Math.tan(newAngle))
+
+    return xVel
+}
