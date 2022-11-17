@@ -199,7 +199,7 @@ class Player{
         this.x = range.value
         this.y = this.game.height - 100
         this.width = 80
-        this.height = 200 //----------------------
+        this.height = 20
     }
     update(deltatime){
         this.x = range.value - this.width / 2
@@ -287,18 +287,22 @@ class Ball{
         if(this.y + this.size / 2 > this.player.y){
 
            if(this.x + this.size > this.player.x && this.x + this.size < this.player.x + this.player.width){
-                this.xVel = -this.xVel
+                
                 this.yVel = -this.yVel 
                 this.sfx.play()
            }
            
             //studs ändra så att vinkeln blir anorlunda beroende på vart på rectangeln man träffar
-            
+            if(this.x + this.size > this.player.x + this.player.width / 2){
+                this.xVel = 3
+            }
+
+            if(this.x > this.player.x && this.x + this.size < this.player.x + this.player.width / 2 ){
+                this.xVel = -3
+            }
         }
 
-        if(this.y + this.size > this.player.y && this.x + this.size > this.player.x){
-            
-        }
+        
 
         this.x += this.xVel
         this.y += this.yVel
