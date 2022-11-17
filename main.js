@@ -41,7 +41,7 @@ class Game{
         this.redRows
         this.orangeRows
 
-        this.ballInterval = 500
+        this.ballInterval = 1000
         this.ballTimer = 0
         this.ballCount = 1 // antal bollar (ska bero på powerup)
         this.balls = [] 
@@ -199,7 +199,7 @@ class Player{
         this.x = range.value
         this.y = this.game.height - 100
         this.width = 80
-        this.height = 20
+        this.height = 200 //----------------------
     }
     update(deltatime){
         this.x = range.value - this.width / 2
@@ -284,10 +284,20 @@ class Ball{
         }
 
         //kolla efter kollisoin med spelaren
-        if(this.y + this.size / 2 > this.player.y && this.y && this.y < this.player.y + this.player.height && this.x > this.player.x && this.x < this.player.x + this.player.width){
+        if(this.y + this.size / 2 > this.player.y){
+
+           if(this.x + this.size > this.player.x && this.x + this.size < this.player.x + this.player.width){
+                this.xVel = -this.xVel
+                this.yVel = -this.yVel 
+                this.sfx.play()
+           }
+           
             //studs ändra så att vinkeln blir anorlunda beroende på vart på rectangeln man träffar
-            this.yVel = -this.yVel 
-            this.sfx.play()
+            
+        }
+
+        if(this.y + this.size > this.player.y && this.x + this.size > this.player.x){
+            
         }
 
         this.x += this.xVel
@@ -306,34 +316,35 @@ class Brick{
          
         this.yV = yV
         this.xV = xV  
+        this.width = 119.375
+        this.height = 20
 
         this.rows = [   
-            20,
-            50,
+            5,
+            30,
+            55,
             80,
-            110,
-            140,
-            170,
-            200,
+            105,
+            130,
+            155,
+            180,
+            205,
             230,
-            260,
-            290,
-            310
+            355
         ]
         
         this.collumns = [  
-            20,
-            140,
-            260,
-            380,
-            500,
-            620,
-            740,
-            860,
+            5,
+            this.width*1 + 10,
+            this.width*2 + 15,
+            this.width*3 + 20,
+            this.width*4 + 25,
+            this.width*5 + 30,
+            this.width*6 + 35,
+            this.width*7 + 40
         ]
 
-        this.width = 100
-        this.height = 20
+        
         this.x = this.collumns[xV]
         this.y = this.rows[yV]
 
