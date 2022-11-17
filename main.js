@@ -19,6 +19,8 @@ let isPaused = true
 let turnBall = false
 let lastTime = 0
 
+let playTime = 0
+
 // skapa en timer och highscore på levlarna
 
 class Game{
@@ -90,7 +92,7 @@ class Game{
         this.iX = 0
         this.iY = 0
 
-        
+        playTime = 0
     }
     update(deltatime){
 
@@ -134,8 +136,6 @@ class Game{
           
         
         this.balls.forEach(object => object.update(deltatime))
-      
-        console.log(this.bricksOnScreen);
 
         //block | lösa att bollarna inte hinner spawna
         if(this.bricks.length < this.bricksOnScreen){
@@ -213,7 +213,6 @@ class Player{
 }
 
 
-//skapa en vektorer | byt till rect och ändra kollision 
 class Ball{
     constructor(player, game){
         this.game = game
@@ -294,11 +293,11 @@ class Ball{
            
             //studs ändra så att vinkeln blir anorlunda beroende på vart på rectangeln man träffar
             if(this.x + this.size > this.player.x + this.player.width / 2 && this.x + this.size /2 < this.player.x + this.player.width){
-                this.xVel = vector(60)
+                this.xVel = vector(40 + (this.player.x + this.player.width) - this.x)
             }
 
-            if(this.x > this.player.x && this.x + this.size < this.player.x + this.player.width / 2 ){
-                this.xVel = -vector(60)
+            if(this.x + this.size > this.player.x && this.x + this.size < this.player.x + this.player.width / 2 ){
+                this.xVel = -vector(40 + (this.x - this.player.x))
             }
         }
 
@@ -444,6 +443,8 @@ function main(timestamp){
 
         let deltatime = timestamp - lastTime
         lastTime = timestamp
+
+        playTime++
     
         //tar bort tidigare scen
         ctx.clearRect(0, 0, canvas.width, canvas.height)
