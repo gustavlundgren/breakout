@@ -14,6 +14,12 @@ const levelSelect = document.getElementById('level-select')
 const health1 = document.getElementById('health-1')
 const health2 = document.getElementById('health-2')
 
+const endScreen = document.getElementById('end-screen')
+const endText = document.getElementById('end')
+const timeEl = document.getElementById('time')
+const continueBtn = document.getElementById('continue')
+
+
 //en klass som sköter updatering och ritning av spelets object och även har koll på storlek och positioner
 let isPaused = true
 let turnBall = false
@@ -178,9 +184,10 @@ class Game{
         this.bricks = this.bricks.filter(object => !object.markedForDelete)
 
         if(this.bricksOnScreen == 0){
-            isPaused = true
-            alert('dub')
-            menu.style.visibility = 'visible'
+             range.value = 500
+             isPaused = true
+            endScreen.style.visibility = 'visible'
+           
         }
     }
     draw(){
@@ -261,10 +268,11 @@ class Ball{
         }
 
         if(this.health == 0){
+            range.value = 500
             isPaused = true
-            alert('törsk')
-            menu.style.visibility = 'visible'
+            endScreen.style.visibility = 'visible'
             this.health = 2
+           
         }
 
         switch(this.health){
@@ -363,18 +371,17 @@ class Brick{
     }
     update(deltatime){
 
-        if( this.x + this.width > this.ball.map(e => e.x)[0] - this.ball.map(e => e.size)[0] / 2 &&
-            this.x < this.ball.map(e => e.x)[0] &&
-            this.y < this.ball.map(e => e.y)[0] &&
-            this.y + this.height > this.ball.map(e => e.y)[0] - this.ball.map(e => e.size)[0] / 2){
+        if(this.ball.map(e => e.y)[0] + 10 > this.y && this.ball.map(e => e.y)[0] < this.y + this.height){
             
-            turnBall = true
-            this.hits++
+            if(this.ball.map(e => e.x)[0] < this.x + this.width && this.ball.map(e => e.x)[0] + 10 > this.x){
+                
+                turnBall = true
+                this.hits++
 
-            this.sfx.play()
-        }
-        else{
-            this.markedForDelete = false
+                this.sfx.play()
+            }else{
+                this.markedForDelete = false
+            }
         }
 
         if(this.hits == this.damage){
@@ -463,6 +470,11 @@ startBtn.addEventListener('click', function(){
     isPaused = false
     game.reset()
     range.value = 500
+})
+
+continueBtn.addEventListener('click', function(){
+    endScreen.style.visibility='hidden'
+    menu.style.visibility='visible'
 })
 
 //funktion som skapar en vektor av x oxh y
