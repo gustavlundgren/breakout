@@ -474,14 +474,14 @@ function main(timestamp){
     requestAnimationFrame(main)
 }
 
-
+main(0)
 
 startBtn.addEventListener('click', function(){
     menu.style.visibility='hidden'
     isPaused = false
     game.reset()
     range.value = 500
-    main(0)
+    
 })
 
 continueBtn.addEventListener('click', function(){
