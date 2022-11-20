@@ -23,6 +23,7 @@ const continueBtn = document.getElementById('continue')
 //en klass som sköter updatering och ritning av spelets object och även har koll på storlek och positioner
 let isPaused = true
 let turnBall = false
+const bounceDiff = 180
 let lastTime = 0
 
 let playTime = 0
@@ -39,7 +40,7 @@ class Game{
         this.firstRun = true
 
         this.levelCheckStop = false
-        this.levels = { one: {bricksOnScreen: 32, orangeRows: 1, redRows: 1}, two: {bricksOnScreen: 56, orangeRows: 3, redRows: 2}, three: {bricksOnScreen: 72, orangeRows: 4, redRows: 3}   /*lägga in lista med egenskaper för varje level (3 levlar)*/}
+        this.levels = { one: {bricksOnScreen: 1, orangeRows: 1, redRows: 1}, two: {bricksOnScreen: 56, orangeRows: 3, redRows: 2}, three: {bricksOnScreen: 72, orangeRows: 4, redRows: 3}   /*lägga in lista med egenskaper för varje level (3 levlar)*/}
 
         this.player = new Player(this, range.value)
 
@@ -187,7 +188,9 @@ class Game{
              range.value = 500
              isPaused = true
             endScreen.style.visibility = 'visible'
-           
+            endText.textContent = 'You won'
+            timeEl.innerHTML = `Yor time was: <br> ${Math.round((lastTime / 1000) *10 ) / 10} s`
+            localStorage.setItem('highScore', Math.round((lastTime / 1000) *10 ) / 10)
         }
     }
     draw(){
@@ -271,6 +274,8 @@ class Ball{
             range.value = 500
             isPaused = true
             endScreen.style.visibility = 'visible'
+            endText.textContent = 'You lost'
+            timeEl.innerHTML = `Yor time alive was: <br> ${Math.round(lastTime / 100) / 10} s`
             this.health = 2
            
         }
@@ -367,10 +372,15 @@ class Brick{
         this.sfx = new Audio()
         this.sfx.src="ping_pong_8bit_beeep.ogg"
 
+        this.diffCount = 0
+
         this.markedForDelete = false
     }
     update(deltatime){
 
+        this.diffCount += deltatime
+
+        if(this.diffCount > bounceDiff){
         if(this.ball.map(e => e.y)[0] + 10 > this.y && this.ball.map(e => e.y)[0] < this.y + this.height){
             
             if(this.ball.map(e => e.x)[0] < this.x + this.width && this.ball.map(e => e.x)[0] + 10 > this.x){
@@ -383,6 +393,7 @@ class Brick{
                 this.markedForDelete = false
             }
         }
+    }
 
         if(this.hits == this.damage){
             this.markedForDelete = true
@@ -463,13 +474,14 @@ function main(timestamp){
     requestAnimationFrame(main)
 }
 
-main(0)
+
 
 startBtn.addEventListener('click', function(){
     menu.style.visibility='hidden'
     isPaused = false
     game.reset()
     range.value = 500
+    main(0)
 })
 
 continueBtn.addEventListener('click', function(){
