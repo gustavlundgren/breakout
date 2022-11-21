@@ -27,6 +27,7 @@ const bounceDiff = 180
 let lastTime = 0
 
 let playTime = 0
+let timeCheck = false
 
 // skapa en timer och highscore på levlarna
 
@@ -450,7 +451,6 @@ class LevelThreeBrick extends Brick{
         super.draw(ctx)
     }
 }
-
 //Skapar ett object från min klass "Game"
 const game = new Game(ctx, canvas.width, canvas.height)
 
@@ -461,7 +461,17 @@ function main(timestamp){
         let deltatime = timestamp - lastTime
         lastTime = timestamp
 
-        playTime++
+        if(!this.timeCheck){
+            //kod att kör en gång
+            if(!timeCheck){ 
+                playTime = 0
+                timeCheck = true
+            }
+        }
+        
+        playTime += deltatime
+
+        console.log();
     
         //tar bort tidigare scen
         ctx.clearRect(0, 0, canvas.width, canvas.height)
