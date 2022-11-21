@@ -40,7 +40,7 @@ class Game{
         this.firstRun = true
 
         this.levelCheckStop = false
-        this.levels = { one: {bricksOnScreen: 1, orangeRows: 1, redRows: 1}, two: {bricksOnScreen: 56, orangeRows: 3, redRows: 2}, three: {bricksOnScreen: 72, orangeRows: 4, redRows: 3}   /*lägga in lista med egenskaper för varje level (3 levlar)*/}
+        this.levels = { one: {bricksOnScreen: 32, orangeRows: 1, redRows: 1}, two: {bricksOnScreen: 56, orangeRows: 3, redRows: 2}, three: {bricksOnScreen: 72, orangeRows: 4, redRows: 3}   /*lägga in lista med egenskaper för varje level (3 levlar)*/}
 
         this.player = new Player(this, range.value)
 
@@ -234,6 +234,7 @@ class Ball{
         this.x = this.player.x + this.player.width/ 2
         this.y = this.player.y - this.size/ 2
         
+        this.deltaSpeed = 0
         this.xVel = 3
         this.yVel = -3
 
@@ -313,8 +314,6 @@ class Ball{
                 this.xVel = -vector(40 + (this.x - this.player.x))
             }
         }
-
-        
 
         this.x += this.xVel
         this.y += this.yVel
